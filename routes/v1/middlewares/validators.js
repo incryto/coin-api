@@ -50,8 +50,25 @@ const schemaFilter = {
     }
   }
 
-
+const bucketPurchaseSchema = {
+  type:"object",
+  properties:{
+    bucket_id:{type:"string"},
+    amount:{type:"number"}
+  },
+  required:["bucket_id","amount"]
+}
+const validateBucketPurchase = ajv.compile(bucketPurchaseSchema)
+function bucketPurchaseValidator(req, res, next) {
+  const valid = validateBucketPurchase(req.body)
+  if (!valid) {
+    return res.status(200).json({ "response_code": 400, "message":"data validation error", "response" : null })
+  } else {
+    next();
+  }
+}
   module.exports = {
     filterValidator,
-    bucketValidator
+    bucketValidator,
+    bucketPurchaseValidator
   };

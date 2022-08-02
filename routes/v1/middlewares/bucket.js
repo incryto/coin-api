@@ -1,3 +1,4 @@
+const { getBucket } = require('../controllers/bucket');
 const bucket = require('./../models/bucket')
 
 
@@ -12,6 +13,9 @@ function createBucket(req,res,next){
     })
 
     newbucket.save().then((data) => {
+        console.log(`data is`)
+        console.log(data)
+        req.bucket_id = data["_id"]
         next();
       })
       .catch((err) => {
@@ -36,7 +40,14 @@ function createBucket(req,res,next){
       });
 }
 
+function purchaseBucket(req,res,next){
+      getBucket(req.bucket_id)
+      next()
+}
+
+
 
 module.exports = {
     createBucket,
+    purchaseBucket
 }

@@ -22,6 +22,14 @@ const bucket = new mongoose.Schema({
         type:String,
         default:""
     },
+    likes:{
+        type:Array,
+        default:[]
+    },
+    purchases:{
+        type:Array,
+        default:[]
+    },
     coins:[
         {
            id:{

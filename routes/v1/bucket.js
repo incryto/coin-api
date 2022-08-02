@@ -4,12 +4,9 @@ var router = express.Router();
 
 const bucket = require("./models/bucket");
 
-router.post("/bucket/create", (req, res) => {});
-
 const coin = require("./models/coin");
-const {filterValidator, bucketValidator} = require('./middlewares/validators');
+const {filterValidator, bucketValidator, bucketPurchaseValidator} = require('./middlewares/validators');
 const { validateToken } = require("./middlewares/token");
-const { createBucket } = require("./middlewares/bucket");
 router.post("/coins/names",filterValidator, async (req, res) => {
     try{
         coin.find(req.body.filter).exec(function(err,coins) {
@@ -35,11 +32,30 @@ router.post("/coins/names",filterValidator, async (req, res) => {
     }
 });
 
-router.post('/buckets/create/',validateToken,bucketValidator,createBucket,(req,res)=>{
+const {addBucketInCreator} = require('./middlewares/user')
+const { createBucket, purchaseBucket } = require("./middlewares/bucket");
+
+router.post('/buckets/create/',validateToken,bucketValidator,createBucket,addBucketInCreator,(req,res)=>{
     res.status(200).json({
         "response_code":200,
-        "message":"Validation successful",
-        "response":null
+        "message":"Bucket created successfully",
+        "response":{
+            "bucket_id":req.bucket_id
+        }
+    })
+}),
+
+router.post('/buckets/purchase',validateToken,bucketPurchaseValidator, purchaseBucket,(req,res)=>{
+    res.status(200).json({
+        "response_code":200,
+        "message":"Bucket purchased successfully",
+        "response":{
+            "bucket_id":"2342423",
+            "purchase_id":"231112",
+            "total_amount":500,
+            "total_buckets":0.4,
+            "purchase_time":"33022:223"
+        }
     })
 })
 
