@@ -33,7 +33,8 @@ router.post("/coins/names",filterValidator, async (req, res) => {
 });
 
 const {addBucketInCreator} = require('./middlewares/user')
-const { createBucket, purchaseBucket } = require("./middlewares/bucket");
+const { createBucket,getBucket, getCurrentTotal,purchaseBucket,setPurchaseToBuckets } = require("./middlewares/bucket");
+
 
 router.post('/buckets/create/',validateToken,bucketValidator,createBucket,addBucketInCreator,(req,res)=>{
     res.status(200).json({
@@ -45,16 +46,16 @@ router.post('/buckets/create/',validateToken,bucketValidator,createBucket,addBuc
     })
 }),
 
-router.post('/buckets/purchase',validateToken,bucketPurchaseValidator, purchaseBucket,(req,res)=>{
+router.post('/buckets/purchase',validateToken,bucketPurchaseValidator,getBucket, getCurrentTotal,purchaseBucket,setPurchaseToBuckets,(req,res)=>{
     res.status(200).json({
         "response_code":200,
         "message":"Bucket purchased successfully",
         "response":{
-            "bucket_id":"2342423",
-            "purchase_id":"231112",
-            "total_amount":500,
-            "total_buckets":0.4,
-            "purchase_time":"33022:223"
+            "bucket_id":req.body.bucket_id,
+            "purchase_id":req.purchase_id,
+            "total_amount":req.body.amount,
+            "total_buckets":req.quantity,
+            "purchase_time":req.purchase_time
         }
     })
 })

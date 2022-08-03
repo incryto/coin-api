@@ -42,6 +42,26 @@ function addBucketInCreator(req,res,next){
 
 }
 
+
+
+function setBucketInUser(req,res,next){
+  try{  
+        user.findByIdAndUpdate(req.user_id,{ $addToSet: {purchases:req.purchase_id} },(err,reply)=>{
+            if(err){
+                throw new Error("Error while updating user")
+            }else{
+                next()
+            }
+        })
+  }catch(e){
+    console.log(e)
+    return res.status(200).json({
+      "response_code":500,
+      "message":"Internal server error",
+      "response":null
+    })
+  }
+}
 module.exports = {
     addBucketInCreator
 }
