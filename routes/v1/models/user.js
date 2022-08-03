@@ -9,6 +9,13 @@ const user = new mongoose.Schema({
   name: {
     type: String,
   },
+  wallet:{
+    type:Number,
+    default:5000
+  },
+  number:{
+    type:String,
+  },
   profile_completion: {
     type: Number,
     default: 0,
