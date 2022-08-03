@@ -36,35 +36,16 @@ function createBucket(req, res, next) {
     });
 }
 
-function getCurrentTotal(req, res, next) {
-  var bucket_coins = req.bucket_info["coins"];
-  var tot = 0;
-  console.log("getting coin price");
-  const coin_map = new Map();
-  coin_list = [];
-  for (var coin in bucket_coins) {
-    console.log(coin);
-    coin_map.set(bucket_coins[coin]["id"], bucket_coins[coin]["quantity"]);
-    coin_list.push(bucket_coins[coin]["id"]);
-  }
-  console.log(bucket_coins);
-  console.log(coin_list);
-  const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=inr&ids=${coin_list.join(
-    "%2C"
-  )}&order=market_cap_desc&per_page=100&page=1&sparkline=false`;
-  console.log(url);
+
+const {getCurrentTotalPrice} = require('../controllers/bucket')
+
+async function getCurrentTotal(req, res, next) {
   try {
-    axios.get(url).then((result) => {
-      req.purchase_time= Date.now();
-      tot = 0;
-      console.log(result);
-      for (var i = 0; i < result["data"].length; i++) {
-        const key = result["data"][i]["id"];
-        tot += coin_map.get(key) * result["data"][i]["current_price"];
-      }
-      req.current_total = tot
-      next();
-    });
+     const res =await getCurrentTotalPrice(req.bucket_info["coins"])
+     console.log(res)
+     req.current_total = res[0]
+     req.purchase_time = res[1]
+     next()
   } catch (e) {
     console.log("Error in gettotal")
     console.log(e);
@@ -98,7 +79,6 @@ function purchaseBucket(req, res, next) {
       if(err){
         throw new Error("Error while creating purchase")
       }else{
-        console.log(reply)
         req.purchase_id = reply["_id"]
         next()
       }
@@ -126,7 +106,6 @@ function setPurchaseToBuckets(req,res,next){
           if(err){
             throw new Error("Error while adding ourchase in bucket")
           }else{
-            console.log(reply)
             next()
           }
         }
@@ -141,14 +120,13 @@ function setPurchaseToBuckets(req,res,next){
   }
 }
 
-function getBucket(req, res, next) {
+function getBucketById(req, res, next) {
   try {
     bucket.findById(req.body.bucket_id, function (err, reply) {
       if (err) {
         console.log(err);
         throw new Error("Error while getting bucket");
       } else {
-        console.log(reply);
         req.bucket_info = reply;
         next();
       }
@@ -163,10 +141,46 @@ function getBucket(req, res, next) {
   }
 }
 
+async function getBuckets(req,res,next){
+    let filter = req.body.filter
+    filter??={}
+    try {
+      bucket.find(filter,async (err, reply)=>{
+          if(err){
+              throw new Error("Error while gettting all buckets");
+          }else{
+              // console.log(replyMap)
+              reply_list= []
+              for(var i = 0;i<reply.length;i++){
+                const resp = await getCurrentTotalPrice(reply[i]['coins'])
+                console.log(reply[i])
+                reply[i].current_price =resp[0]
+              }
+              console.log("blaa")
+              console.log(reply)
+              // console.log(`reply map is ${replyMap}`)
+              req.fetched_buckets = reply
+              next()
+          }
+      });
+    } catch (e) {
+      res.status(200).json({
+        "response_code":500,
+        "message":"Internal server error",
+        "response":null
+      })
+    }
+}
+
+
+
+
+
 module.exports = {
   createBucket,
   getCurrentTotal,
-  getBucket,
+  getBucketById,
   purchaseBucket,
-  setPurchaseToBuckets
+  setPurchaseToBuckets,
+  getBuckets
 };

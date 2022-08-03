@@ -10,6 +10,10 @@ const bucket = new mongoose.Schema({
         type:String,
         default:50,
     },
+    current_price:{
+        type:Number,
+        default:0
+    },
     creation_date:{
         type:Date,
         default:Date.now()

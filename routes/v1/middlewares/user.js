@@ -63,5 +63,6 @@ function setBucketInUser(req,res,next){
   }
 }
 module.exports = {
-    addBucketInCreator
+    addBucketInCreator,
+    setBucketInUser
 }
