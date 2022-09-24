@@ -1,9 +1,7 @@
 const axios = require('axios')
 
  async function getCurrentTotalPrice(bucket_coins){
-    // var bucket_coins = req.bucket_info["coins"];
   var tot = 0;
-  console.log("getting coin price");
   const coin_map = new Map();
   coin_list = [];
 
@@ -29,6 +27,23 @@ const axios = require('axios')
   return [tot,time]
 }
 
+
+async function getCurrentPrice(bucket_coins){
+  console.log(bucket_coins)
+  const coin_map = new Map();
+  coin_list = [];
+  for (var coin in bucket_coins) {
+    coin_map.set(bucket_coins[coin]["id"], bucket_coins[coin]["quantity"]);
+    coin_list.push(bucket_coins[coin]["id"]);
+  }
+  const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=inr&ids=${coin_list.join(
+    "%2C"
+  )}&order=market_cap_desc&per_page=100&page=1&sparkline=false`;
+  var result = await axios.get(url)
+  return result.data
+}
+
+
 module.exports = {
-  getCurrentTotalPrice
+  getCurrentTotalPrice,getCurrentPrice
 }

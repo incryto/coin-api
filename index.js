@@ -9,6 +9,11 @@ app.use(bodyParser.json())
 const redis = require('./services/redis')
 const mongo = require('./services/mongo-db')
 
+const cors = require('cors')
+app.use(cors({
+    origin: '*'
+}))
+
 const v1_bucket = require('./routes/v1/bucket')
 app.use("/v1",v1_bucket)
 

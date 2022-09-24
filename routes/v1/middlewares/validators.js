@@ -12,6 +12,7 @@ const schemaFilter = {
   }
   const validateFilter = ajv.compile(schemaFilter)
   function filterValidator(req, res, next) {
+    console.log(req.body)
     const valid = validateFilter(req.body)
     if (!valid) {
       return res.status(200).json({ "response_code": 400, "message":"data validation error", "response" : null })
@@ -42,6 +43,7 @@ const schemaFilter = {
   }
   const validateBucket = ajv.compile(bucketSchema)
   function bucketValidator(req, res, next) {
+    console.log(req.body)
     const valid = validateBucket(req.body)
     if (!valid) {
       return res.status(200).json({ "response_code": 400, "message":"data validation error", "response" : null })

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bucket = require('./bucket');
 
 
 const purchase = new mongoose.Schema({
@@ -7,7 +8,8 @@ const purchase = new mongoose.Schema({
         required :true
     },
     "bucket_id":{
-        type:String ,
+        type: mongoose.Schema.Types.ObjectId,
+        ref:bucket,
         required : true
     },
     "purchase_time":{

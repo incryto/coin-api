@@ -46,7 +46,7 @@ function addBucketInCreator(req,res,next){
 
 function setBucketInUser(req,res,next){
   try{  
-        user.findByIdAndUpdate(req.user_id,{ $addToSet: {purchases:req.purchase_id} },(err,reply)=>{
+        user.findByIdAndUpdate(req.user_id,{ $addToSet: {purchases:req.purchase_id} , "$inc": { "total": -1*req.body.amount } },(err,reply)=>{
             if(err){
                 throw new Error("Error while updating user")
             }else{
