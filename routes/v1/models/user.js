@@ -16,6 +16,9 @@ const user = new mongoose.Schema({
   number:{
     type:String,
   },
+  current_price:{
+    type:Number
+  },
   profile_completion: {
     type: Number,
     default: 0,

@@ -145,8 +145,7 @@ function getBucketById(req, res, next) {
 }
 
 async function getBuckets(req, res, next) {
-  let filter = req.body.filter;
-  filter ??= {};
+  let filter = req.body.filter??{};
   try {
     bucket.find(filter, async (err, buckets_fetched) => {
       if (err) {
